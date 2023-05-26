@@ -53,7 +53,13 @@ public class MyImage {
     
     /** Total number of pixel in an image*/
     private int totalPixels;
-    
+
+
+
+    public int getMedian(int i, int i1) {
+        return (i+i1)/2;
+    }
+
     /** 
      * Image type example: jpg|png 
      * JPG does not support alpha (transparency is lost) while PNG supports alpha.
