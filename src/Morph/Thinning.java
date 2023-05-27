@@ -16,7 +16,7 @@ public class Thinning {
              * T(I,M) = I - HitMiss(I,M)
              */
             MyImage tmp = new MyImage(img);
-            HitMiss.binaryImage(tmp, mask, maskSize);
-            Subtract.binaryImage(img, tmp, img);
+            HitMissOperator.binaryImage(tmp, mask);
+//            Subtract.binaryImage(img, tmp, img);
         }
 }

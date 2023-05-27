@@ -1,5 +1,5 @@
 package Morph;
-
+import imageFX.MyImage;
 public class Closing {
 
         /**
@@ -8,8 +8,8 @@ public class Closing {
          * @param img The image on which opening is performed.
          */
         public static void binaryImage(MyImage img){
-            Dilation.binaryImage(img, true);
-            Erosion.binaryImage(img, true);
+//            Dilation.binaryImage(img, true);
+//            Erosion.binaryImage(img, true);
         }
 
         /**
@@ -20,7 +20,7 @@ public class Closing {
          * @param maskSize The size of the square mask [No. of rows or columns of the square mask]
          */
         public static void grayscaleImage(MyImage img, int mask[], int maskSize){
-            Dilation.grayscaleImage(img, mask, maskSize);
-            Erosion.grayscaleImage(img, mask, maskSize);
+//            Dilation.grayscaleImage(img, mask, maskSize);
+//            Erosion.grayscaleImage(img, mask, maskSize);
         }
 }

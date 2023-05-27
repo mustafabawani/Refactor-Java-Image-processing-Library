@@ -5,7 +5,7 @@ public class HitMissOperator {
     private static final int BLACK = 0;
     private static final int WHITE = 255;
 
-    public static void binaryImage(MyImage img, int[][] mask) {
+    public static void binaryImage(MyImage img, int[] mask) {
         int width = img.getImageWidth();
         int height = img.getImageHeight();
         int output[] = new int[width * height];
@@ -23,7 +23,7 @@ public class HitMissOperator {
         updateImage(img, output);
     }
 
-    private static boolean isMaskMatch(MyImage img, int[][] mask, int startX, int startY) {
+    private static boolean isMaskMatch(MyImage img, int[] mask, int startX, int startY) {
         int maskSize = mask.length;
         int maskHalfSize = maskSize / 2;
 
@@ -36,7 +36,7 @@ public class HitMissOperator {
                 int imgY = startY - maskHalfSize + my;
 
                 if (imgX >= 0 && imgX < width && imgY >= 0 && imgY < height) {
-                    int maskValue = mask[my][mx];
+                    int maskValue = mask[mx + my * maskSize];
                     int imgValue = img.getRed(imgX, imgY);
 
                     if (maskValue <= 1 && imgValue != maskValue * WHITE) {
@@ -52,7 +52,7 @@ public class HitMissOperator {
     private static void updateImage(MyImage img, int[] output) {
         for (int y = 0; y < img.getImageHeight(); y++) {
             for (int x = 0; x < img.getImageWidth(); x++) {
-                int v = output[x + y * width];
+                int v = output[x + y * img.getImageWidth()];
                 img.setPixel(x, y, WHITE, v, v, v);
             }
         }
