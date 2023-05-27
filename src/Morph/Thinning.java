@@ -18,5 +18,6 @@ public class Thinning {
             MyImage tmp = new MyImage(img);
             HitMissOperator.binaryImage(tmp, mask);
 //            Subtract.binaryImage(img, tmp, img);
+
         }
 }
