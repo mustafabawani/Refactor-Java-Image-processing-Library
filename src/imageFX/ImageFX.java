@@ -364,6 +364,372 @@ public class ImageFX{
         void transformPixel(int x, int y);
     }
 
+    public static void createRandomImage(MyImage img) {
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int a = getRandomValue();
+                int r = getRandomValue();
+                int g = getRandomValue();
+                int b = getRandomValue();
+                img.setPixel(x, y, a, r, g, b);
+            }
+        }
+    }
+
+    public static void createColorImage(MyImage img, int color) {
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                img.setPixelToValue(x, y, color);
+            }
+        }
+    }
+
+    public static void crop(MyImage img, int x, int y, int width, int height) {
+        BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        for (int sy = y, j = 0; sy < y + height; sy++, j++) {
+            for (int sx = x, i = 0; sx < x + width; sx++, i++) {
+                bi.setRGB(i, j, img.getPixel(sx, sy));
+            }
+        }
+
+        img.modifyImageObject(width, height, bi);
+    }
+
+    public static void negative(MyImage img) {
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int a = img.getAlpha(x, y);
+                int r = 255 - img.getRed(x, y);
+                int g = 255 - img.getGreen(x, y);
+                int b = 255 - img.getBlue(x, y);
+                img.setPixel(x, y, a, r, g, b);
+            }
+        }
+    }
+
+    public static void sepiaTone(MyImage img) {
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int a = img.getAlpha(x, y);
+                int r = img.getRed(x, y);
+                int g = img.getGreen(x, y);
+                int b = img.getBlue(x, y);
+
+                int tr = (int) (0.393 * r + 0.769 * g + 0.189 * b);
+                int tg = (int) (0.349 * r + 0.686 * g + 0.168 * b);
+                int tb = (int) (0.272 * r + 0.534 * g + 0.131 * b);
+
+                r = (tr > 255) ? 255 : tr;
+                g = (tg > 255) ? 255 : tg;
+                b = (tb > 255) ? 255 : tb;
+
+                img.setPixel(x, y, a, r, g, b);
+            }
+        }
+    }
+
+    public static void pixelation(MyImage img, int maskSize) {
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y += maskSize) {
+            for (int x = 0; x < width; x += maskSize) {
+                int[] rgb = new int[3];
+                int count = 0;
+
+                for (int yi = 0; yi < maskSize && y + yi < height; yi++) {
+                    for (int xi = 0; xi < maskSize && x + xi < width; xi++) {
+                        rgb[0] += img.getRed(x + xi, y + yi);
+                        rgb[1] += img.getGreen(x + xi, y + yi);
+                        rgb[2] += img.getBlue(x + xi, y + yi);
+                        count++;
+                    }
+                }
+
+                int[] avg = new int[3];
+                avg[0] = rgb[0] / count;
+                avg[1] = rgb[1] / count;
+                avg[2] = rgb[2] / count;
+
+                for (int yi = 0; yi < maskSize && y + yi < height; yi++) {
+                    for (int xi = 0; xi < maskSize && x + xi < width; xi++) {
+                        img.setPixel(x + xi, y + yi, 255, avg[0], avg[1], avg[2]);
+                    }
+                }
+            }
+        }
+    }
+
+    public static void redImage(MyImage img) {
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int a = img.getAlpha(x, y);
+                int r = img.getRed(x, y);
+                img.setPixel(x, y, a, r, 0, 0);
+            }
+        }
+    }
+
+    public static void greenImage(MyImage img) {
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int a = img.getAlpha(x, y);
+                int g = img.getGreen(x, y);
+                img.setPixel(x, y, a, 0, g, 0);
+            }
+        }
+    }
+
+    public static void blueImage(MyImage img) {
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int a = img.getAlpha(x, y);
+                int b = img.getBlue(x, y);
+                img.setPixel(x, y, a, 0, 0, b);
+            }
+        }
+    }
+
+    public static void changeImageRedValue(MyImage img, int red) {
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int a = img.getAlpha(x, y);
+                int g = img.getGreen(x, y);
+                int b = img.getBlue(x, y);
+                img.setPixel(x, y, a, red, g, b);
+            }
+        }
+    }
+
+    private static int getRandomValue() {
+        return (int) (Math.random() * 256);
+    }
+    public static void changeImageGreenValue(MyImage img, int green) {
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int a = img.getAlpha(x, y);
+                int r = img.getRed(x, y);
+                int b = img.getBlue(x, y);
+                img.setPixel(x, y, a, r, green, b);
+            }
+        }
+    }
+
+    public static void changeImageBlueValue(MyImage img, int blue) {
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int a = img.getAlpha(x, y);
+                int r = img.getRed(x, y);
+                int g = img.getGreen(x, y);
+                img.setPixel(x, y, a, r, g, blue);
+            }
+        }
+    }
+
+    public static void contrast(MyImage img) {
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int a = img.getAlpha(x, y);
+                int r = img.getRed(x, y);
+                int g = img.getGreen(x, y);
+                int b = img.getBlue(x, y);
+
+                r = (r > 128) ? (int) (r * 1.2) : (int) (r / 1.2);
+                g = (g > 128) ? (int) (g * 1.2) : (int) (g / 1.2);
+                b = (b > 128) ? (int) (b * 1.2) : (int) (b / 1.2);
+
+                img.setPixel(x, y, a, r, g, b);
+            }
+        }
+    }
+
+    public static void sharpen(MyImage img) {
+        int[] mask = {0, -1, 0, -1, 5, -1, 0, -1, 0};
+        int maskSize = 3;
+        int[] buff;
+        int[] outputPixels = new int[img.getImageTotalPixels()];
+
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int i = 0;
+                buff = new int[9];
+                for (int r = y - (maskSize / 2); r <= y + (maskSize / 2); r++) {
+                    for (int c = x - (maskSize / 2); c <= x + (maskSize / 2); c++) {
+                        if (r < 0 || r >= height || c < 0 || c >= width) {
+                            buff[i] = 0;
+                        } else {
+                            buff[i] = img.getPixel(c, r);
+                        }
+                        i++;
+                    }
+                }
+
+                int sa = 0, sr = 0, sg = 0, sb = 0;
+                for (i = 0; i < 9; i++) {
+                    sa += mask[i] * getAlphaValueFromPixelValue(buff[i]);
+                    sr += mask[i] * getRedValueFromPixelValue(buff[i]);
+                    sg += mask[i] * getGreenValueFromPixelValue(buff[i]);
+                    sb += mask[i] * getBlueValueFromPixelValue(buff[i]);
+                }
+
+                int p = getPixelValueFromARGBValue(sa, sr, sg, sb);
+                outputPixels[x + y * width] = p;
+            }
+        }
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                img.setPixelToValue(x, y, outputPixels[x + y * width]);
+            }
+        }
+    }
+    /**
+     * This method will blur the image using a 3x3 mask with equal weights.
+     *
+     * @param img The image to blur.
+     */
+    public static void blur_D9(MyImage img) {
+        int maskSize = 3; // The width of the mask.
+
+        int[] buff = new int[9]; // Buffered array of pixels
+
+        int[] outputPixels = new int[img.getImageTotalPixels()]; // Output array for blurred pixels
+
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        // Blur operation
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                // Fill buff array
+                int i = 0;
+                for (int r = y - (maskSize / 2); r <= y + (maskSize / 2); r++) {
+                    for (int c = x - (maskSize / 2); c <= x + (maskSize / 2); c++) {
+                        if (r < 0 || r >= height || c < 0 || c >= width) {
+                            // Some portion of the mask is outside the image.
+                            buff[i] = 0;
+                        } else {
+                            buff[i] = img.getPixel(c, r);
+                        }
+                        i++;
+                    }
+                }
+
+                // Calculate the weighted average
+                int sa = 0, sr = 0, sg = 0, sb = 0;
+                for (int pixel : buff) {
+                    sa += getAlphaValueFromPixelValue(pixel) / 9;
+                    sr += getRedValueFromPixelValue(pixel) / 9;
+                    sg += getGreenValueFromPixelValue(pixel) / 9;
+                    sb += getBlueValueFromPixelValue(pixel) / 9;
+                }
+
+                // Save result in outputPixels array.
+                int p = getPixelValueFromARGBValue(sa, sr, sg, sb);
+                outputPixels[x + y * width] = p;
+            }
+        }
+
+        // Write the output pixels to the image pixels
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                img.setPixelToValue(x, y, outputPixels[x + y * width]);
+            }
+        }
+    }
+
+    /**
+     * This method will blur the image using a 3x3 mask with different weights.
+     *
+     * @param img The image to blur.
+     */
+    public static void blur_D16(MyImage img) {
+        int[] mask = {1, 2, 1, 2, 4, 2, 1, 2, 1}; // Mask for weighted average
+        int maskSize = 3; // The width of the mask.
+
+        int[] buff = new int[9]; // Buffered array of pixels
+
+        int[] outputPixels = new int[img.getImageTotalPixels()]; // Output array for blurred pixels
+
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        // Blur operation
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                // Fill buff array
+                int i = 0;
+                for (int r = y - (maskSize / 2); r <= y + (maskSize / 2); r++) {
+                    for (int c = x - (maskSize / 2); c <= x + (maskSize / 2); c++) {
+                        if (r < 0 || r >= height || c < 0 || c >= width) {
+                            // Some portion of the mask is outside the image.
+                            buff[i] = 0;
+                        } else {
+                            buff[i] = img.getPixel(c, r);
+                        }
+                        i++;
+                    }
+                }
+
+                // Calculate the weighted average
+                int sa = 0, sr = 0, sg = 0, sb = 0;
+                for (i = 0; i < 9; i++) {
+                    sa += (mask[i] * getAlphaValueFromPixelValue(buff[i])) / 16;
+                    sr += (mask[i] * getRedValueFromPixelValue(buff[i])) / 16;
+                    sg += (mask[i] * getGreenValueFromPixelValue(buff[i])) / 16;
+                    sb += (mask[i] * getBlueValueFromPixelValue(buff[i])) / 16;
+                }
+
+                // Save result in outputPixels array.
+                int p = getPixelValueFromARGBValue(sa, sr, sg, sb);
+                outputPixels[x + y * width] = p;
+            }
+        }
+
+        // Write the output pixels to the image pixels
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                img.setPixelToValue(x, y, outputPixels[x + y * width]);
+            }
+        }
+    }
 
 
 
