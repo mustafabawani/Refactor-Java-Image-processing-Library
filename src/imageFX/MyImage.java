@@ -66,20 +66,15 @@ public class MyImage {
      * @param img The image object whose copy is created.
      */
     public MyImage(MyImage img){
+
         this.width = img.getImageWidth();
         this.height = img.getImageHeight();
         this.totalPixels = this.width * this.height;
         this.pixels = new int[this.totalPixels];
-        
+
         this.imgType = img.imgType;
-        Type=new FileReader(this.imgType);
-        this.image=Type.updateImageObject(width,height);
-//        if(this.imgType == ImageType.PNG){
-//            this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-//        }else{
-//            this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-//        }
-        
+        this.image=setBufferedImage(this.imgType);
+
         //copy original image pixels value to new image and pixels array
         for(int y = 0; y < this.height; y++){
             for(int x = 0; x < this.width; x++){
@@ -88,7 +83,15 @@ public class MyImage {
             }
         }
     }
-    
+
+    private BufferedImage setBufferedImage(ImageType imgType)
+    {
+        if(imgType == ImageType.PNG){
+            return (new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
+        }else{
+            return(new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB));
+        }
+    }
     /////////////////////////////////////// METHODS ////////////////////////////
     
     /**
@@ -103,11 +106,8 @@ public class MyImage {
         this.height = height;
         this.totalPixels = this.width * this.height;
         this.pixels = new int[this.totalPixels];
-        if(this.imgType == ImageType.PNG){
-            this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        }else{
-            this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        }
+
+        this.image=setBufferedImage(this.imgType);
         Graphics2D g2d = this.image.createGraphics();
         g2d.drawImage(bi, 0, 0, null);
         g2d.dispose();
@@ -120,26 +120,19 @@ public class MyImage {
      * @param filePath the path of the image file
      * Example filePath = "D:\\LogoJava.jpg"
      */
-    public void readImage(String filePath){
-        try{
-            File f = new File(filePath);
-            image = ImageIO.read(f);
-            String fileType = filePath.substring(filePath.lastIndexOf('.')+1);
-            if("jpg".equals(fileType)){
-                imgType = ImageType.JPG;
-            }else{
-                imgType = ImageType.PNG;
-            }
-            this.width = image.getWidth();
-            this.height = image.getHeight();
-            this.totalPixels = this.width * this.height;
-            this.pixels = new int[this.totalPixels];
-            initPixelArray();
-        }catch(IOException e){
-            System.out.println("Error Occurred!\n"+e);
-        }
+    public void readImage(String filePath) {
+        FileReader file=new FileReader(filePath);
+        image=file.ReadFile(image);
+        String fileType = filePath.substring(filePath.lastIndexOf('.') + 1);
+        imgType = fileType.equalsIgnoreCase("jpg") ? MyImage.ImageType.JPG : MyImage.ImageType.PNG;
+        width = image.getWidth();
+        height = image.getHeight();
+        totalPixels = width * height;
+        pixels = new int[totalPixels];
+        initPixelArray();
     }
-    
+
+
     /**
      * Write the content of the BufferedImage object 'image' to a file
      * 
@@ -176,13 +169,15 @@ public class MyImage {
             System.out.println("Error Occurred: "+e);
         }
     }
-    
+
+
+
     /**
      * This method will check for equality of two images.
      * If we have two image img1 and img2
      * Then calling img1.isEqual(img2) will return TRUE if img1 and img2 are equal
      * else it will return FALSE.
-     * 
+     *
      * @param img The image to check with.
      * @return TRUE if two images are equal else FALSE.
      */
