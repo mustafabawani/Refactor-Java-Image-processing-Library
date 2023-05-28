@@ -140,13 +140,9 @@ public class MyImage {
      * Example filePath = "D:\\Output.jpg"
      */
     public void writeImage(String filePath){
-        try{
-            File f = new File(filePath);
-            String fileType = filePath.substring(filePath.lastIndexOf('.')+1);
-            ImageIO.write(image, fileType, f);
-        }catch(IOException e){
-            System.out.println("Error Occurred!\n"+e);
-        }
+        String fileType = filePath.substring(filePath.lastIndexOf('.')+1);
+        FileWriter file=new FileWriter(filePath);
+        file.writeFile(image,fileType);
     }
     
     /**
