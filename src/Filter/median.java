@@ -1,12 +1,12 @@
 
-package imageFX.filter;
+package Filter;
 
-import imageFX.ImageFX;
+import imageFX.*;
 import imageFX.MyImage;
 
 import java.util.Arrays;
 
-public class Median {
+public class median {
 
     public static void medianFilter(MyImage img, int maskSize) {
         int outputPixels[] = new int[img.getImageTotalPixels()];

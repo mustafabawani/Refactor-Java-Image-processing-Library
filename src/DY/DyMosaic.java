@@ -1,6 +1,8 @@
 package DY;
 
-public class DYMosaic {
+import imageFX.MyImage;
+
+public class DyMosaic {
 
     private static void createMosaic(MyImage img, int DYColor, int mSize) {
         int r = (DYColor >> 16) & 0xFF;

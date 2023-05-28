@@ -1,13 +1,11 @@
 package Filter;
+import imageFX.*;
 
-package Filter;
-
-import imageFX.ImageFX;
 import imageFX.MyImage;
 
 import java.util.Arrays;
-
-public class Spatial {
+import imageFX.MyImage;
+public class spatial {
 
     public static void spatialFilter_RGB(MyImage img, int maskSize) {
         int outputPixels[] = new int[img.getImageTotalPixels()];

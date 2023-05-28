@@ -1,9 +1,9 @@
 package Filter;
 
-import imageFX.ImageFX;
 import imageFX.MyImage;
+import imageFX.*;
 
-public class Mean {
+public class mean {
 
     public static void meanFilter_RGB(MyImage img, int maskSize) {
         int outputPixels[] = new int[img.getImageTotalPixels()];

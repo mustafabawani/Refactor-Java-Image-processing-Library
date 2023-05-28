@@ -1,7 +1,7 @@
 package DY;
 
-import imageFX.ImageFX;
 import imageFX.MyImage;
+import imageFX.*;
 
 public class ColorMix {
     /**

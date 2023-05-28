@@ -54,6 +54,7 @@ public class Mask {
         if(shape=="Circle")
         {
             figure=new Circle();
+            int[] circle= figure.draw(param);
             figure.fill(param);
         }
         if(shape=="diamond")
