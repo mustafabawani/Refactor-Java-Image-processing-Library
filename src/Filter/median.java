@@ -1,39 +1,80 @@
-package Filter;
+
+package imageFX.filter;
 
 import imageFX.ImageFX;
 import imageFX.MyImage;
 
-public class Mean {
+import java.util.Arrays;
 
-    public static void meanFilter_RGB(MyImage img, int maskSize) {
+public class Median {
+
+    public static void medianFilter(MyImage img, int maskSize) {
         int outputPixels[] = new int[img.getImageTotalPixels()];
         int width = img.getImageWidth();
         int height = img.getImageHeight();
-        
-        int alpha, red, green, blue;
+
+        int buff[];
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                alpha = 0;
-                red = 0;
-                green = 0;
-                blue = 0;
+                buff = new int[maskSize * maskSize];
                 int count = 0;
                 for (int r = y - (maskSize / 2); r <= y + (maskSize / 2); r++) {
                     for (int c = x - (maskSize / 2); c <= x + (maskSize / 2); c++) {
                         if (r < 0 || r >= height || c < 0 || c >= width) {
                             continue;
                         } else {
-                            alpha += img.getAlpha(c, r);
-                            red += img.getRed(c, r);
-                            green += img.getGreen(c, r);
-                            blue += img.getBlue(c, r);
+                            buff[count] = img.getPixel(c, r);
+                            count++;
+                        }
+                    }
+                }
+                
+                Arrays.sort(buff);
+                outputPixels[x + y * width] = buff[count / 2];
+            }
+        }
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                img.setPixelToValue(x, y, outputPixels[x + y * width]);
+            }
+        }
+    }
+
+    public static void medianFilter_RGB(MyImage img, int maskSize) {
+        int outputPixels[] = new int[img.getImageTotalPixels()];
+        int width = img.getImageWidth();
+        int height = img.getImageHeight();
+
+        int red[], green[], blue[];
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int a = img.getAlpha(x, y);
+                red = new int[maskSize * maskSize];
+                green = new int[maskSize * maskSize];
+                blue = new int[maskSize * maskSize];
+                int count = 0;
+                for (int r = y - (maskSize / 2); r <= y + (maskSize / 2); r++) {
+                    for (int c = x - (maskSize / 2); c <= x + (maskSize / 2); c++) {
+                        if (r < 0 || r >= height || c < 0 || c >= width) {
+                            continue;
+                        } else {
+                            red[count] = img.getRed(c, r);
+                            green[count] = img.getGreen(c, r);
+                            blue[count] = img.getBlue(c, r);
                             count++;
                         }
                     }
                 }
 
-                int p = ImageFX.getPixelValueFromARGBValue(alpha / count, red / count, green / count, blue / count);
+                Arrays.sort(red);
+                Arrays.sort(green);
+                Arrays.sort(blue);
+
+                int index = (count % 2 == 0) ? count / 2 - 1 : count / 2;
+                int p = ImageFX.getPixelValueFromARGBValue(a, red[index], green[index], blue[index]);
                 outputPixels[x + y * width] = p;
             }
         }
@@ -45,8 +86,10 @@ public class Mean {
         }
     }
 
-    public static void meanFilter_ZeroFill(MyImage img, int maskSize) {
-        int outputPixels[] = new int[img.getImageTotalPixels()];
+    public static void medianFilter_ZeroFill(MyImage img, int maskSize) {
+        int outputPixels[] = new int[img
+
+.getImageTotalPixels()];
         int width = img.getImageWidth();
         int height = img.getImageHeight();
 
@@ -66,20 +109,8 @@ public class Mean {
                         i++;
                     }
                 }
-
-                int sa = 0, sr = 0, sg = 0, sb = 0;
-                for (i = 0; i < maskSize * maskSize; i++) {
-                    sa += ImageFX.getAlphaValueFromPixelValue(buff[i]);
-                    sr += ImageFX.getRedValueFromPixelValue(buff[i]);
-                    sg += ImageFX.getGreenValueFromPixelValue(buff[i]);
-                    sb += ImageFX.getBlueValueFromPixelValue(buff[i]);
-                }
-
-                int p = ImageFX.getPixelValueFromARGBValue(sa / (maskSize * maskSize), sr / (maskSize * maskSize),
-                        sg / (maskSize * maskSize), sb / (maskSize * maskSize));
-                outputPixels[x + y * width] = p;
-
-
+                Arrays.sort(buff);
+                outputPixels[x + y * width] = buff[(maskSize * maskSize) / 2];
             }
         }
 
@@ -90,7 +121,7 @@ public class Mean {
         }
     }
 
-    public static void meanFilter_ValueFill(MyImage img, int maskSize) {
+    public static void medianFilter_ValueFill(MyImage img, int maskSize) {
         int outputPixels[] = new int[img.getImageTotalPixels()];
         int width = img.getImageWidth();
         int height = img.getImageHeight();
@@ -122,18 +153,8 @@ public class Mean {
                         i++;
                     }
                 }
-
-                int sa = 0, sr = 0, sg = 0, sb = 0;
-                for (i = 0; i < maskSize * maskSize; i++) {
-                    sa += ImageFX.getAlphaValueFromPixelValue(buff[i]);
-                    sr += ImageFX.getRedValueFromPixelValue(buff[i]);
-                    sg += ImageFX.getGreenValueFromPixelValue(buff[i]);
-                    sb += ImageFX.getBlueValueFromPixelValue(buff[i]);
-                }
-
-                int p = ImageFX.getPixelValueFromARGBValue(sa / (maskSize * maskSize), sr / (maskSize * maskSize),
-                        sg / (maskSize * maskSize), sb / (maskSize * maskSize));
-                outputPixels[x + y * width] = p;
+                Arrays.sort(buff);
+                outputPixels[x + y * width] = buff[(maskSize * maskSize) / 2];
             }
         }
 
