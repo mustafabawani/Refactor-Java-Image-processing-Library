@@ -2,6 +2,8 @@ package DY;
 
 import imageFX.MyImage;
 import Morph.HitMissOperator;
+import MathPackage.*;
+
 
 
 public class CornerPoints {
@@ -39,8 +41,9 @@ public class CornerPoints {
                 HitMissOperator.binaryImage(images[i], masks[i]);
             }
             //LogicalOR the 4 images
-            LogicalOR.binaryImage(images[0], images[1], img);
-            LogicalOR.binaryImage(img, images[2], img);
-            LogicalOR.binaryImage(img, images[3], img);
+            ColorImage colorImageOperations= (ColorImage) ImageOperatorFactory.createOperator("color");
+            colorImageOperations.applyOr(images[0], images[1], img);
+            colorImageOperations.applyOr(images[0], images[1], img);
+            colorImageOperations.applyOr(images[0], images[1], img);
         }
 }//class ends here
