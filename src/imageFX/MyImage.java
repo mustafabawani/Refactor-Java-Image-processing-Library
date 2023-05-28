@@ -514,43 +514,37 @@ public class MyImage {
      * @param I Intensity value.
      * @return The rgb value for the corresponding HSI value.
      */
-    private int[] HSI_getRGBFromHSI(double H, double S, double I){
-        int rgb[] = new int[3];
-        int r = 0, g = 0, b = 0;
-        
-        if(H == 0){
-            r = (int)Math.round(I + 2*I*S);
-            g = (int)Math.round(I - I*S);
-            b = (int)Math.round(I - I*S);
-        }else if(H < 120){
-            r = (int)Math.round(I + I*S*(Math.cos(Math.toRadians(H))/Math.cos(Math.toRadians(60-H))));
-            g = (int)Math.round(I + I*S*(1 - Math.cos(Math.toRadians(H))/Math.cos(Math.toRadians(60-H))));
-            b = (int)Math.round(I - I*S);
-        }else if(H == 120){
-            r = (int)Math.round(I - I*S);
-            g = (int)Math.round(I + 2*I*S);
-            b = (int)Math.round(I - I*S);
-        }else if(H < 240){
-            r = (int)Math.round(I - I*S);
-            g = (int)Math.round(I + I*S*(Math.cos(Math.toRadians(H-120))/Math.cos(Math.toRadians(180-H))));
-            b = (int)Math.round(I + I*S*(1 - (Math.cos(Math.toRadians(H-120))/Math.cos(Math.toRadians(180-H)))));
-        }else if(H == 240){
-            r = (int)Math.round(I - I*S);
-            g = (int)Math.round(I - I*S);
-            b = (int)Math.round(I + 2*I*S);
-        }else if(H < 360){
-            r = (int)Math.round(I + I*S*(1 - Math.cos(Math.toRadians(H-240))/Math.cos(Math.toRadians(300-H))));
-            g = (int)Math.round(I - I*S);
-            b = (int)Math.round(I + I*S*(Math.cos(Math.toRadians(H-240))/Math.cos(Math.toRadians(300-H))));
+    private int[] HSI_getRGBFromHSI(double H, double S, double I) {
+        int[] rgb = new int[3];
+        double[] cosValues = new double[3];
+        double[] multipliers = new double[3];
+
+        cosValues[0] = Math.cos(Math.toRadians(H));
+        cosValues[1] = Math.cos(Math.toRadians(H - 120));
+        cosValues[2] = Math.cos(Math.toRadians(H - 240));
+
+        multipliers[0] = I + I * S * (2 * cosValues[0] / (cosValues[0] + cosValues[1]));
+        multipliers[1] = I + I * S * (2 * (1 - cosValues[0] / (cosValues[0] + cosValues[1])));
+        multipliers[2] = I - I * S;
+
+        if (H < 120) {
+            rgb[0] = (int) Math.round(multipliers[0]);
+            rgb[1] = (int) Math.round(multipliers[1]);
+            rgb[2] = (int) Math.round(multipliers[2]);
+        } else if (H < 240) {
+            rgb[0] = (int) Math.round(multipliers[2]);
+            rgb[1] = (int) Math.round(multipliers[0]);
+            rgb[2] = (int) Math.round(multipliers[1]);
+        } else {
+            rgb[0] = (int) Math.round(multipliers[1]);
+            rgb[1] = (int) Math.round(multipliers[2]);
+            rgb[2] = (int) Math.round(multipliers[0]);
         }
-        
-        rgb[0]=r;
-        rgb[1]=g;
-        rgb[2]=b;
-        
+
         return rgb;
     }
-    
+
+
     ////////////////////////////// HSV color model Methods /////////////////////
     
     /**
@@ -560,17 +554,23 @@ public class MyImage {
      * @param y The y coordinate of the pixel.
      * @return H The hue value of the pixel [0-360] in degree.
      */
-    public double HSV_getHue(int x, int y){
-        int r = getRed(x,y);
-        int g = getGreen(x,y);
-        int b = getBlue(x,y);
-        
-        double H = Math.toDegrees(Math.acos((r - (0.5*g) - (0.5*b))/Math.sqrt((r*r)+(g*g)+(b*b)-(r*g)-(g*b)-(b*r))));
-        H = (b>g)?360-H:H;
-        
+    public double HSV_getHue(int x, int y) {
+        int r = getRed(x, y);
+        int g = getGreen(x, y);
+        int b = getBlue(x, y);
+
+        double numerator = r - (0.5 * g) - (0.5 * b);
+        double denominator = Math.sqrt((r * r) + (g * g) + (b * b) - (r * g) - (g * b) - (b * r));
+        double H = Math.toDegrees(Math.acos(numerator / denominator));
+
+        if (b > g) {
+            H = 360 - H;
+        }
+
         return H;
     }
-    
+
+
     /**
      * This method will return the saturation of the pixel (x,y) as per HSV color model.
      * 
@@ -801,46 +801,45 @@ public class MyImage {
      * @param L Lightness of the pixel.
      * @return The rgb value for the corresponding HSL value.
      */
-    private int[] HSL_getRGBFromHSL(double H, double S, double L){
-        int rgb[] = new int[3];
-        int r = 0, g = 0, b = 0;
-        
-        double tmp = S*(1.0 - Math.abs(2*L - 1.0));
-        double min = 255.0*(L - 0.5*tmp);
-        double tmp2 = tmp*(1.0 - Math.abs((H/60)%2 - 1));
-        
-        H %= 360;
-        
-        if(H < 60){
-            r = (int)Math.round(255*tmp+min);
-            g = (int)Math.round(255*tmp2+min);
-            b = (int)Math.round(min);
-        }else if(H < 120){
-            r = (int)Math.round(255*tmp2+min);
-            g = (int)Math.round(255*tmp+min);
-            b = (int)Math.round(min);
-        }else if(H < 180){
-            r = (int)Math.round(min);
-            g = (int)Math.round(255*tmp+min);
-            b = (int)Math.round(255*tmp2+min);
-        }else if(H < 240){
-            r = (int)Math.round(min);
-            g = (int)Math.round(255*tmp2+min);
-            b = (int)Math.round(255*tmp+min);
-        }else if(H < 300){
-            r = (int)Math.round(255*tmp2+min);
-            g = (int)Math.round(min);
-            b = (int)Math.round(255*tmp+min);
-        }else if(H < 360){
-            r = (int)Math.round(255*tmp+min);
-            g = (int)Math.round(min);
-            b = (int)Math.round(255*tmp2+min);
+    private int[] HSL_getRGBFromHSL(double H, double S, double L) {
+        int[] rgb = new int[3];
+        int r, g, b;
+
+        double C = (1 - Math.abs(2 * L - 1)) * S;
+        double X = C * (1 - Math.abs((H / 60) % 2 - 1));
+        double m = L - C / 2;
+
+        if (H < 60) {
+            r = (int) Math.round(255 * (C + m));
+            g = (int) Math.round(255 * (X + m));
+            b = (int) Math.round(255 * m);
+        } else if (H < 120) {
+            r = (int) Math.round(255 * (X + m));
+            g = (int) Math.round(255 * (C + m));
+            b = (int) Math.round(255 * m);
+        } else if (H < 180) {
+            r = (int) Math.round(255 * m);
+            g = (int) Math.round(255 * (C + m));
+            b = (int) Math.round(255 * (X + m));
+        } else if (H < 240) {
+            r = (int) Math.round(255 * m);
+            g = (int) Math.round(255 * (X + m));
+            b = (int) Math.round(255 * (C + m));
+        } else if (H < 300) {
+            r = (int) Math.round(255 * (X + m));
+            g = (int) Math.round(255 * m);
+            b = (int) Math.round(255 * (C + m));
+        } else {
+            r = (int) Math.round(255 * (C + m));
+            g = (int) Math.round(255 * m);
+            b = (int) Math.round(255 * (X + m));
         }
-        
-        rgb[0]=r;
-        rgb[1]=g;
-        rgb[2]=b;
-        
+
+        rgb[0] = r;
+        rgb[1] = g;
+        rgb[2] = b;
+
         return rgb;
     }
+
 }//class ImageFX ends here
